@@ -5,7 +5,7 @@ refdes=U?
 T 400 1500 5 10 1 1 0 1 1
 device=LTC1863
 T 300 7000 5 10 0 0 0 0 1
-footprint=LTC_GN
+footprint=LTC_GN16
 T 300 7200 5 10 0 0 0 0 1
 author=Michael Petersen
 T 400 7800 5 10 0 0 0 0 1
