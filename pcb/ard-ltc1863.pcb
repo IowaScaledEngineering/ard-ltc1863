@@ -6,7 +6,7 @@ FileVersion[20070407]
 PCB["" 210000 270000]
 
 Grid[500.0 0 0 0]
-Cursor[0 34000 0.000000]
+Cursor[4500 28000 0.000000]
 PolyArea[200000000.000000]
 Thermal[0.500000]
 DRC[800 800 800 1000 2000 800]
@@ -1551,10 +1551,6 @@ Layer(5 "silk")
 	Text[64000 144000 1 100 "REG" "clearline"]
 	Text[115000 74000 0 100 "I2C Pullup " "clearline"]
 	Text[102500 67000 0 100 "JP1A/B Enable" "clearline"]
-	Text[74000 204500 0 100 "ARD-LTC1863 v1.0" "clearline"]
-	Text[74000 212000 0 100 "Iowa Scaled Engineering" "clearline"]
-	Text[74000 219500 0 100 "http://www.iascaled.com" "clearline"]
-	Text[74000 227000 0 100 "CC BY-SA (C)2013" "clearline"]
 	Text[171000 12400 0 100 "I2C on" "clearline"]
 	Text[171000 18400 0 100 "A4/A5" "clearline"]
 	Text[171000 26400 0 100 "I2C on" "clearline"]
@@ -1568,6 +1564,10 @@ Layer(5 "silk")
 	Text[83000 8500 2 100 "2" "clearline"]
 	Text[92500 8500 2 100 "1" "clearline"]
 	Text[102500 8500 2 100 "0" "clearline"]
+	Text[96000 185000 0 100 "ARD-LTC1863 v1.0" "clearline"]
+	Text[96000 192500 0 100 "Iowa Scaled Engineering" "clearline"]
+	Text[96000 200000 0 100 "http://www.iascaled.com" "clearline"]
+	Text[96000 207500 0 100 "CC BY-SA (C)2013" "clearline"]
 )
 NetList()
 (
