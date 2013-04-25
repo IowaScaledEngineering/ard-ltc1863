@@ -52,16 +52,32 @@ unsigned int Ard186x::ltc186xRead()
 {
 	uint16_t retval = 0;
 	digitalWrite(ARD186X_SS_DIO, LOW);
-	retval = SPI.transfer(current186xConfig);
-	retval <<= 8;
-	retval |= 0xFF & SPI.transfer(0);
+	if (DEVICE_LTC1863 == ltc186xDeviceType)
+	{
+		retval = SPI.transfer(current186xConfig);
+		retval <<= 4;
+		retval |= 0x0F & (SPI.transfer(0)>>4);
+	}
+	else if (DEVICE_LTC1867 == ltc186xDeviceType)
+	{
+		retval = SPI.transfer(current186xConfig);
+		retval <<= 8;
+		retval |= 0xFF & SPI.transfer(0);
+	}
+
 	digitalWrite(ARD186X_SS_DIO, HIGH);
 	return(retval);
 }
 
 int Ard186x::ltc186xReadBipolar()
 {
-	return((int)ltc186xRead());
+	int retval = (int)ltc186xRead();
+	
+	if (DEVICE_LTC1863 == ltc186xDeviceType
+		&& (retval & 0x0800))
+		retval |= 0xF000;
+	
+	return(retval);
 }
 
 void Ard186x::ltc186xChangeChannel(byte nextChannel, byte unipolar=1)
@@ -139,7 +155,7 @@ byte Ard186x::begin(byte deviceType, byte eepromAddress)
 	SPI.transfer(0);
 	digitalWrite(ARD186X_SS_DIO, HIGH);
 
-	i2cAddr_eeprom = eepromAddress;
+/*	i2cAddr_eeprom = eepromAddress;
 	Wire.beginTransmission(i2cAddr_eeprom);
 	Wire.write(ARD186X_EEPROM_ADDR_EUI48);
 	retval = Wire.endTransmission(false);
@@ -164,14 +180,14 @@ byte Ard186x::begin(byte deviceType, byte eepromAddress)
 			for(i=0; i<12; i+=2)
 				sprintf(&eui48[i], "%02X", Wire.read());
 		}
-	}		
+	}		*/
 	return(init_status);
 }
 
 byte Ard186x::eepromRead(int address, byte defaultOnError=0)
 {
 	byte retval = 0;
-	
+	/*
 	// Our address range only goes to 0xFF
 	if (address > 0xFF)
 		return(defaultOnError);
@@ -190,12 +206,13 @@ byte Ard186x::eepromRead(int address, byte defaultOnError=0)
 	Wire.requestFrom((uint8_t)i2cAddr_eeprom, (uint8_t)1, (uint8_t)true);
 	if (Wire.available() < 1)
 		return(defaultOnError);
-	return(Wire.read());
+	return(Wire.read());*/
+	return(0);
 }
 
 byte Ard186x::eepromWrite(int address, byte value, byte blocking=1)
 {
-	uint8_t waitLoop = 10;
+/*	uint8_t waitLoop = 10;
 	byte retval = 0;
 	if (0 == i2cAddr_eeprom)
 		return(ARD186X_EEPROM_ERR);
@@ -226,7 +243,8 @@ byte Ard186x::eepromWrite(int address, byte value, byte blocking=1)
 		}
 		return(ARD186X_EEPROM_ERR);
 	}
-	return(ARD186X_SUCCESS);
+	return(ARD186X_SUCCESS);*/
+	return(0);
 }
 
 

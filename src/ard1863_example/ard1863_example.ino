@@ -31,7 +31,7 @@ byte confChan=0;
 void setup() {
   // initialize serial communications at 9600 bps:
   Serial.begin(9600);
-  Wire.begin();
+//  Wire.begin();
   SPI.begin();  
   ard186xboard1.begin(DEVICE_LTC1863, ARD186X_EEP_ADDR_ZZ);
   ard186xboard1.ltc186xChangeChannel(LTC186X_CHAN_SINGLE_0P, 1);
@@ -59,15 +59,11 @@ void loop() {
   Serial.print("read eeprom[0] ");
   Serial.print(ard186xboard1.eepromRead(0, true));
   Serial.print("\n");*/
-  pinMode(ARD186X_SS_DIO, OUTPUT);
-  digitalWrite(3, LOW);
 
   Serial.print("Channel 0 SE");
   Serial.print(" = [");
   Serial.print(ard186xboard1.ltc186xRead());
   Serial.print("]\n");
-
-  digitalWrite(3, HIGH);
 
   delay(1000);
 }
