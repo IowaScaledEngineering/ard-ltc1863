@@ -1,5 +1,7 @@
+#include <SPI.h>
+
 /*************************************************************************
-Title:    ARD-LTC2499 Library Example Arduino Sketch
+Title:    ARD-LTC186X Library Example Arduino Sketch
 Authors:  Nathan D. Holmes <maverick@drgw.net>
 File:     $Id: $
 License:  GNU General Public License v3
@@ -20,9 +22,9 @@ LICENSE:
 *************************************************************************/
 
 #include <Wire.h>
-#include <Ard2499.h>
+#include <Ard1863.h>
 
-Ard2499 ard2499board1;
+Ard186x ard186xboard1;
 
 byte confChan=0;
 
@@ -30,9 +32,9 @@ void setup() {
   // initialize serial communications at 9600 bps:
   Serial.begin(9600);
   Wire.begin();
-  ard2499board1.begin(ARD2499_ADC_ADDR_ZZZ, ARD2499_EEP_ADDR_ZZ);
-  ard2499board1.ltc2499ChangeConfiguration(LTC2499_CONFIG2_60_50HZ_REJ);
-  confChan = ard2499board1.ltc2499ChangeChannel(LTC2499_CHAN_TEMPERATURE);
+  SPI.begin();  
+  ard186xboard1.begin(DEVICE_LTC1863, ARD186X_EEP_ADDR_ZZ);
+  ard186xboard1.ltc186xChangeChannel(LTC186X_CHAN_SINGLE_0P, 1);
 }
 
 byte i=0;
@@ -42,32 +44,30 @@ void loop() {
 
   byte retval = 0;
  
-  Serial.print("eeprom mac = [");
-  Serial.print(ard2499board1.eui48Get());
+/*  Serial.print("eeprom mac = [");
+  Serial.print(ard186xboard1.eui48Get());
   Serial.print("]\n");
   
   Serial.print(" write eeprom[0] ");
   Serial.print(i);
-  retval = ard2499board1.eepromWrite(0, i, true);
+  retval = ard186xboard1.eepromWrite(0, i, true);
   Serial.print(" retval=");
   Serial.print(retval);
   Serial.print("\n");
   i++;
 
   Serial.print("read eeprom[0] ");
-  Serial.print(ard2499board1.eepromRead(0, true));
-  Serial.print("\n");
+  Serial.print(ard186xboard1.eepromRead(0, true));
+  Serial.print("\n");*/
+  pinMode(ARD186X_SS_DIO, OUTPUT);
+  digitalWrite(3, LOW);
 
-  ard2499board1.ltc2499ChangeChannel(LTC2499_CHAN_SINGLE_0P);
   Serial.print("Channel 0 SE");
   Serial.print(" = [");
-  Serial.print(ard2499board1.ltc2499ReadAndChangeChannel(LTC2499_CHAN_TEMPERATURE));
+  Serial.print(ard186xboard1.ltc186xRead());
   Serial.print("]\n");
 
-  Serial.print("Temp = [");
-  Serial.print(ard2499board1.ltc2499ReadTemperature(ARD2499_TEMP_F));
-  Serial.print(" F]\n");
-  
-  
+  digitalWrite(3, HIGH);
+
   delay(1000);
 }
