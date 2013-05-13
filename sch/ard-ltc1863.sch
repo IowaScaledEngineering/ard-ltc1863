@@ -1,8 +1,8 @@
 v 20110115 2
 T 67000 40900 9 10 1 0 0 0 1
-LTC2499 Arduino Shield
+LTC1863 Arduino Shield
 T 66800 40600 9 10 1 0 0 0 1
-ard-ltc2499.sch
+ard-ltc1863.sch
 T 67000 40300 9 10 1 0 0 0 1
 1
 T 68500 40300 9 10 1 0 0 0 1
