@@ -7,7 +7,7 @@ File:     $Id: $
 License:  GNU General Public License v3
 
 LICENSE:
-    Copyright (C) 2013 Nathan D. Holmes & Michael D. Petersen
+    Copyright (C) 2014 Nathan D. Holmes & Michael D. Petersen
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,41 +29,85 @@ Ard186x ard186xboard1;
 byte confChan=0;
 
 void setup() {
+  byte retval = 0;
+
   // initialize serial communications at 9600 bps:
   Serial.begin(9600);
 //  Wire.begin();
   SPI.begin();  
   ard186xboard1.begin(DEVICE_LTC1863, ARD186X_EEP_ADDR_ZZ);
   ard186xboard1.ltc186xChangeChannel(LTC186X_CHAN_SINGLE_0P, 1);
+
+  Serial.print("eeprom mac = [");
+  Serial.print(ard186xboard1.eui48Get());
+  Serial.print("]\n");
+  
+  Serial.print(" write 42 to eeprom[0] ");
+  retval = ard186xboard1.eepromWrite(0, 42, true);
+  Serial.print(" retval=");
+  Serial.print(retval);
+  Serial.print("\n");
+
+  Serial.print("read eeprom[0] ");
+  Serial.print(ard186xboard1.eepromRead(0, true));
+  Serial.print("\n");
+
 }
 
-byte i=0;
 
 void loop() {
   // print the results to the serial monitor:
 
   byte retval = 0;
- 
-/*  Serial.print("eeprom mac = [");
-  Serial.print(ard186xboard1.eui48Get());
-  Serial.print("]\n");
-  
-  Serial.print(" write eeprom[0] ");
-  Serial.print(i);
-  retval = ard186xboard1.eepromWrite(0, i, true);
-  Serial.print(" retval=");
-  Serial.print(retval);
-  Serial.print("\n");
-  i++;
 
-  Serial.print("read eeprom[0] ");
-  Serial.print(ard186xboard1.eepromRead(0, true));
-  Serial.print("\n");*/
-
-  Serial.print("Channel 0 SE");
+  Serial.print("Channel ");
+  Serial.print(confChan);
+  Serial.print(" Single Ended");
   Serial.print(" = [");
   Serial.print(ard186xboard1.ltc186xRead());
   Serial.print("]\n");
+  
+  confChan++;
+  if (confChan >= 8)
+  {
+     Serial.print("\n");
+     confChan = 0;
+  }     
+  switch(confChan)
+  {
+    case 0:
+      ard186xboard1.ltc186xChangeChannel(LTC186X_CHAN_SINGLE_0P, 1);
+      break;
+    
+    case 1:
+      ard186xboard1.ltc186xChangeChannel(LTC186X_CHAN_SINGLE_1P, 1);
+      break;
+    
+    case 2:
+      ard186xboard1.ltc186xChangeChannel(LTC186X_CHAN_SINGLE_2P, 1);
+      break;
 
-  delay(1000);
+    case 3:
+      ard186xboard1.ltc186xChangeChannel(LTC186X_CHAN_SINGLE_3P, 1);
+      break;
+    
+    case 4:
+      ard186xboard1.ltc186xChangeChannel(LTC186X_CHAN_SINGLE_4P, 1);
+      break;
+    
+    case 5:
+      ard186xboard1.ltc186xChangeChannel(LTC186X_CHAN_SINGLE_5P, 1);
+      break;
+    
+    case 6:
+      ard186xboard1.ltc186xChangeChannel(LTC186X_CHAN_SINGLE_6P, 1);
+      break;
+    
+    case 7:
+      ard186xboard1.ltc186xChangeChannel(LTC186X_CHAN_SINGLE_7P, 1);
+      break;
+  }
+    
+  
+  delay(500);
 }
