@@ -1,6 +1,6 @@
 schematics ard-ltc1863.sch
 output-name ../pcb/ard-ltc1863
 skip-m4
-elements-dir ../../../footprints
+elements-dir ../../ise-footprints
 
 
