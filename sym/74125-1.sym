@@ -52,9 +52,5 @@ T 1700 950 8 10 1 1 0 6 1
 refdes=U?
 T 2100 1750 5 10 0 0 0 0 1
 description=4 busline drivers
-T 2100 1950 5 10 0 0 0 0 1
-net=Vcc:14
-T 2100 2150 5 10 0 0 0 0 1
-net=GND:7
 T 2100 2350 5 10 0 0 0 0 1
 documentation=http://www-s.ti.com/sc/ds/sn74hc125.pdf
