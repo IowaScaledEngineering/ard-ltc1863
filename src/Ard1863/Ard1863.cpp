@@ -5,7 +5,7 @@ File:     $Id: $
 License:  GNU General Public License v3
 
 LICENSE:
-    Copyright (C) 2013 Nathan D. Holmes & Michael D. Petersen
+    Copyright (C) 2017 Nathan D. Holmes & Michael D. Petersen
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -28,20 +28,20 @@ LICENSE:
 void Ard186x::ltc186xSleep()
 {
 	current186xConfig |= _BV(LTC186X_CONFIG_SLP);
-	digitalWrite(ARD186X_SS_DIO, LOW);
+	digitalWrite(this->cs_pin, LOW);
 	SPI.transfer(current186xConfig);
 	SPI.transfer(0);
-	digitalWrite(ARD186X_SS_DIO, HIGH);
+	digitalWrite(this->cs_pin, HIGH);
 }
 
 void Ard186x::ltc186xWake()
 {
 	uint8_t wasSleeping = current186xConfig & _BV(LTC186X_CONFIG_SLP);
 	current186xConfig &= ~_BV(LTC186X_CONFIG_SLP);
-	digitalWrite(ARD186X_SS_DIO, LOW);
+	digitalWrite(this->cs_pin, LOW);
 	SPI.transfer(current186xConfig);
 	SPI.transfer(0);
-	digitalWrite(ARD186X_SS_DIO, HIGH);
+	digitalWrite(this->cs_pin, HIGH);
 
 	// Wake-up time if we were really sleeping
 	if (wasSleeping)
@@ -51,7 +51,7 @@ void Ard186x::ltc186xWake()
 unsigned int Ard186x::ltc186xRead()
 {
 	uint16_t retval = 0;
-	digitalWrite(ARD186X_SS_DIO, LOW);
+	digitalWrite(this->cs_pin, LOW);
 	if (DEVICE_LTC1863 == ltc186xDeviceType)
 	{
 		retval = SPI.transfer(current186xConfig);
@@ -65,7 +65,7 @@ unsigned int Ard186x::ltc186xRead()
 		retval |= 0xFF & SPI.transfer(0);
 	}
 
-	digitalWrite(ARD186X_SS_DIO, HIGH);
+	digitalWrite(this->cs_pin, HIGH);
 	return(retval);
 }
 
@@ -83,10 +83,10 @@ int Ard186x::ltc186xReadBipolar()
 void Ard186x::ltc186xChangeChannel(byte nextChannel, byte unipolar=1)
 {
 	internalChangeChannel(nextChannel, unipolar);
-	digitalWrite(ARD186X_SS_DIO, LOW);
+	digitalWrite(this->cs_pin, LOW);
 	SPI.transfer(current186xConfig);
 	SPI.transfer(0);
-	digitalWrite(ARD186X_SS_DIO, HIGH);	
+	digitalWrite(this->cs_pin, HIGH);	
 }
 
 void Ard186x::internalChangeChannel(byte nextChannel, byte unipolar)
@@ -128,13 +128,15 @@ const char* Ard186x::eui48Get()
 }
 
 
-byte Ard186x::begin(byte deviceType, byte eepromAddress)
+byte Ard186x::begin(byte deviceType, byte eepromAddress, int cs_pin = 3)
 {
 	byte retval = 0;
 	byte i;
 
-	pinMode(ARD186X_SS_DIO, OUTPUT);
-	digitalWrite(ARD186X_SS_DIO, HIGH);
+	this->cs_pin = cs_pin;
+
+	pinMode(this->cs_pin, OUTPUT);
+	digitalWrite(this->cs_pin, HIGH);
 
 	SPI.begin();
 	SPI.setBitOrder(MSBFIRST);
@@ -150,10 +152,10 @@ byte Ard186x::begin(byte deviceType, byte eepromAddress)
 
 	current186xConfig = LTC186X_CHAN_DIFF_0P_1N;
 
-	digitalWrite(ARD186X_SS_DIO, LOW);
+	digitalWrite(this->cs_pin, LOW);
 	SPI.transfer(current186xConfig);
 	SPI.transfer(0);
-	digitalWrite(ARD186X_SS_DIO, HIGH);
+	digitalWrite(this->cs_pin, HIGH);
 
 	i2cAddr_eeprom = eepromAddress;
 	if (ARD186X_EEP_DISABLE != i2cAddr_eeprom)

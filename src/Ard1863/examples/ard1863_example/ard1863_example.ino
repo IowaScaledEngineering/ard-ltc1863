@@ -30,12 +30,14 @@ byte confChan=0;
 
 void setup() {
   byte retval = 0;
-
+  
+  int chipSelectPin = 3; // 3 is good for most things, but Leonardos share SCL with D3.  8 is the other option
+  
   // initialize serial communications at 9600 bps:
   Serial.begin(9600);
 //  Wire.begin();
   SPI.begin();  
-  ard186xboard1.begin(DEVICE_LTC1863, ARD186X_EEP_ADDR_ZZ);
+  ard186xboard1.begin(DEVICE_LTC1863, ARD186X_EEP_ADDR_ZZ, chipSelectPin);
   ard186xboard1.ltc186xChangeChannel(LTC186X_CHAN_SINGLE_0P, 1);
 
   Serial.print("eeprom mac = [");

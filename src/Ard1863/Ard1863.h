@@ -5,7 +5,7 @@ File:     $Id: $
 License:  GNU General Public License v3
 
 LICENSE:
-    Copyright (C) 2013 Nathan D. Holmes & Michael D. Petersen
+    Copyright (C) 2017 Nathan D. Holmes & Michael D. Petersen
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -84,7 +84,7 @@ class Ard186x
 {
 	public:
 		Ard186x();
-		byte begin(byte deviceType, byte eepromAddress);
+		byte begin(byte deviceType, byte eepromAddress, int cs_pin);
 
 		const char* eui48Get();
 		byte eepromRead(int address, byte defaultOnError);
@@ -107,6 +107,7 @@ class Ard186x
 		uint8_t i2cAddr_eeprom;
 		uint8_t current186xConfig;
 		uint8_t ltc186xDeviceType;
+		int cs_pin;
 		char eui48[6*2+1];
 };
 
