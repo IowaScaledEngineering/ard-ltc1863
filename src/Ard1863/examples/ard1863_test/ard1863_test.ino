@@ -36,9 +36,11 @@ void setup() {
   Serial.begin(9600);
   Wire.begin();
 //  ard1863board1.begin(DEVICE_LTC1863, ARD186X_EEP_ADDR_ZZ);
-  ard186xboard1.begin(DEVICE_LTC1867, ARD186X_EEP_ADDR_ZZ);
+  ard186xboard1.begin(DEVICE_LTC1867, ARD186X_EEP_ADDR_ZZ, 3);
   ard186xboard1.ltc186xChangeChannel(LTC186X_CHAN_SINGLE_0P, 1);
 
+  pinMode(8, OUTPUT);
+  digitalWrite(8, LOW);
 }
 byte i=0;
 
@@ -142,7 +144,7 @@ skipJumpers:
     {
       adc = ard186xboard1.ltc186xRead();
 //      Serial.println(adc);
-      delay(250);
+      delay(100);
       if((38000 < adc) && (adc < 42000))
       {
         count++;
