@@ -21,36 +21,46 @@ LICENSE:
 
 #include <stdlib.h>
 #include <string.h>
-#include <util/delay.h>
+#include "Arduino.h"
 
 #include "Ard1863.h"
+
+#define ARD186x_SPI_CLOCK_FREQ   40000000
 
 void Ard186x::ltc186xSleep()
 {
 	current186xConfig |= _BV(LTC186X_CONFIG_SLP);
+	
+	SPI.beginTransaction(SPISettings(ARD186x_SPI_CLOCK_FREQ, MSBFIRST, SPI_MODE0));
 	digitalWrite(this->cs_pin, LOW);
 	SPI.transfer(current186xConfig);
 	SPI.transfer(0);
 	digitalWrite(this->cs_pin, HIGH);
+	SPI.endTransaction();
 }
 
 void Ard186x::ltc186xWake()
 {
 	uint8_t wasSleeping = current186xConfig & _BV(LTC186X_CONFIG_SLP);
 	current186xConfig &= ~_BV(LTC186X_CONFIG_SLP);
+	
+	SPI.beginTransaction(SPISettings(ARD186x_SPI_CLOCK_FREQ, MSBFIRST, SPI_MODE0));
 	digitalWrite(this->cs_pin, LOW);
 	SPI.transfer(current186xConfig);
 	SPI.transfer(0);
 	digitalWrite(this->cs_pin, HIGH);
-
+	SPI.endTransaction();
+	
 	// Wake-up time if we were really sleeping
 	if (wasSleeping)
-		_delay_ms(70);
+		delay(70);
 }
 
 unsigned int Ard186x::ltc186xRead()
 {
 	uint16_t retval = 0;
+
+	SPI.beginTransaction(SPISettings(ARD186x_SPI_CLOCK_FREQ, MSBFIRST, SPI_MODE0));
 	digitalWrite(this->cs_pin, LOW);
 	if (DEVICE_LTC1863 == ltc186xDeviceType)
 	{
@@ -66,6 +76,8 @@ unsigned int Ard186x::ltc186xRead()
 	}
 
 	digitalWrite(this->cs_pin, HIGH);
+	SPI.endTransaction();
+
 	return(retval);
 }
 
@@ -83,10 +95,12 @@ int Ard186x::ltc186xReadBipolar()
 void Ard186x::ltc186xChangeChannel(byte nextChannel, byte unipolar=1)
 {
 	internalChangeChannel(nextChannel, unipolar);
+	SPI.beginTransaction(SPISettings(ARD186x_SPI_CLOCK_FREQ, MSBFIRST, SPI_MODE0));
 	digitalWrite(this->cs_pin, LOW);
 	SPI.transfer(current186xConfig);
 	SPI.transfer(0);
 	digitalWrite(this->cs_pin, HIGH);	
+	SPI.endTransaction();
 }
 
 void Ard186x::internalChangeChannel(byte nextChannel, byte unipolar)
@@ -138,10 +152,6 @@ byte Ard186x::begin(byte deviceType, byte eepromAddress, int cs_pin = 3)
 	pinMode(this->cs_pin, OUTPUT);
 	digitalWrite(this->cs_pin, HIGH);
 
-	SPI.begin();
-	SPI.setBitOrder(MSBFIRST);
-	SPI.setDataMode(SPI_MODE0);
-	
 	init_status = ARD186X_SUCCESS;
 	strcpy(eui48, "Unknown");
 
@@ -152,10 +162,12 @@ byte Ard186x::begin(byte deviceType, byte eepromAddress, int cs_pin = 3)
 
 	current186xConfig = LTC186X_CHAN_DIFF_0P_1N;
 
+	SPI.beginTransaction(SPISettings(30000000, MSBFIRST, SPI_MODE0));
 	digitalWrite(this->cs_pin, LOW);
 	SPI.transfer(current186xConfig);
 	SPI.transfer(0);
 	digitalWrite(this->cs_pin, HIGH);
+	SPI.endTransaction();
 
 	i2cAddr_eeprom = eepromAddress;
 	if (ARD186X_EEP_DISABLE != i2cAddr_eeprom)
@@ -188,6 +200,8 @@ byte Ard186x::begin(byte deviceType, byte eepromAddress, int cs_pin = 3)
 			}
 		}
 	}
+	
+
 	return(init_status);
 }
 
@@ -251,7 +265,7 @@ byte Ard186x::eepromWrite(int address, byte value, byte blocking=1)
 			Wire.write(address);
 			if (0 == Wire.endTransmission(true))
 				return(0);
-			_delay_ms(1);
+			delay(1);
 		}
 		return(ARD186X_EEPROM_ERR);
 	}

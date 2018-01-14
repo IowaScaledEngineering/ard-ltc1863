@@ -28,6 +28,9 @@ LICENSE:
 #include "Wire.h"
 #include "SPI.h"
 
+#ifndef _BV(a)
+#define _BV(a) (1<<(a))
+#endif
 
 #define LTC186X_CONFIG_SINGLE_END 7
 #define LTC186X_CONFIG_ODD        6
