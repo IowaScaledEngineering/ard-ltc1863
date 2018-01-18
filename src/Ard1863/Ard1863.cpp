@@ -31,12 +31,16 @@ void Ard186x::ltc186xSleep()
 {
 	current186xConfig |= _BV(LTC186X_CONFIG_SLP);
 	
-	SPI.beginTransaction(SPISettings(ARD186x_SPI_CLOCK_FREQ, MSBFIRST, SPI_MODE0));
+	if (!(this->flags & ARD186X_SKIP_SPI_TRANSACTION))
+		SPI.beginTransaction(SPISettings(ARD186x_SPI_CLOCK_FREQ, MSBFIRST, SPI_MODE0));
+
 	digitalWrite(this->cs_pin, LOW);
 	SPI.transfer(current186xConfig);
 	SPI.transfer(0);
 	digitalWrite(this->cs_pin, HIGH);
-	SPI.endTransaction();
+
+	if (!(this->flags & ARD186X_SKIP_SPI_TRANSACTION))
+		SPI.endTransaction();
 }
 
 void Ard186x::ltc186xWake()
@@ -44,12 +48,16 @@ void Ard186x::ltc186xWake()
 	uint8_t wasSleeping = current186xConfig & _BV(LTC186X_CONFIG_SLP);
 	current186xConfig &= ~_BV(LTC186X_CONFIG_SLP);
 	
-	SPI.beginTransaction(SPISettings(ARD186x_SPI_CLOCK_FREQ, MSBFIRST, SPI_MODE0));
+	if (!(this->flags & ARD186X_SKIP_SPI_TRANSACTION))
+		SPI.beginTransaction(SPISettings(ARD186x_SPI_CLOCK_FREQ, MSBFIRST, SPI_MODE0));
+
 	digitalWrite(this->cs_pin, LOW);
 	SPI.transfer(current186xConfig);
 	SPI.transfer(0);
 	digitalWrite(this->cs_pin, HIGH);
-	SPI.endTransaction();
+	
+	if (!(this->flags & ARD186X_SKIP_SPI_TRANSACTION))
+		SPI.endTransaction();
 	
 	// Wake-up time if we were really sleeping
 	if (wasSleeping)
@@ -59,8 +67,9 @@ void Ard186x::ltc186xWake()
 unsigned int Ard186x::ltc186xRead()
 {
 	uint16_t retval = 0;
-
-	SPI.beginTransaction(SPISettings(ARD186x_SPI_CLOCK_FREQ, MSBFIRST, SPI_MODE0));
+	if (!(this->flags & ARD186X_SKIP_SPI_TRANSACTION))
+		SPI.beginTransaction(SPISettings(ARD186x_SPI_CLOCK_FREQ, MSBFIRST, SPI_MODE0));
+		
 	digitalWrite(this->cs_pin, LOW);
 	if (DEVICE_LTC1863 == ltc186xDeviceType)
 	{
@@ -76,7 +85,9 @@ unsigned int Ard186x::ltc186xRead()
 	}
 
 	digitalWrite(this->cs_pin, HIGH);
-	SPI.endTransaction();
+	
+	if (!(this->flags & ARD186X_SKIP_SPI_TRANSACTION))
+		SPI.endTransaction();
 
 	return(retval);
 }
@@ -95,12 +106,17 @@ int Ard186x::ltc186xReadBipolar()
 void Ard186x::ltc186xChangeChannel(byte nextChannel, byte unipolar=1)
 {
 	internalChangeChannel(nextChannel, unipolar);
-	SPI.beginTransaction(SPISettings(ARD186x_SPI_CLOCK_FREQ, MSBFIRST, SPI_MODE0));
+	
+	if (!(this->flags & ARD186X_SKIP_SPI_TRANSACTION))
+		SPI.beginTransaction(SPISettings(ARD186x_SPI_CLOCK_FREQ, MSBFIRST, SPI_MODE0));
+		
 	digitalWrite(this->cs_pin, LOW);
 	SPI.transfer(current186xConfig);
 	SPI.transfer(0);
 	digitalWrite(this->cs_pin, HIGH);	
-	SPI.endTransaction();
+	
+	if (!(this->flags & ARD186X_SKIP_SPI_TRANSACTION))
+		SPI.endTransaction();
 }
 
 void Ard186x::internalChangeChannel(byte nextChannel, byte unipolar)
@@ -141,12 +157,17 @@ const char* Ard186x::eui48Get()
 	return(eui48);
 }
 
+void Ard186x::setFastSPI(byte speedySPI)
+{
+	if (speedySPI)
+		this->flags |= ARD186X_SKIP_SPI_TRANSACTION;
+}
 
 byte Ard186x::begin(byte deviceType, byte eepromAddress, int cs_pin = 3)
 {
 	byte retval = 0;
 	byte i;
-
+	this->flags = 0;
 	this->cs_pin = cs_pin;
 
 	pinMode(this->cs_pin, OUTPUT);
@@ -162,12 +183,16 @@ byte Ard186x::begin(byte deviceType, byte eepromAddress, int cs_pin = 3)
 
 	current186xConfig = LTC186X_CHAN_DIFF_0P_1N;
 
-	SPI.beginTransaction(SPISettings(30000000, MSBFIRST, SPI_MODE0));
+	SPI.begin();
+
+	SPI.beginTransaction(SPISettings(ARD186x_SPI_CLOCK_FREQ, MSBFIRST, SPI_MODE0));
 	digitalWrite(this->cs_pin, LOW);
 	SPI.transfer(current186xConfig);
 	SPI.transfer(0);
 	digitalWrite(this->cs_pin, HIGH);
 	SPI.endTransaction();
+
+	Wire.begin();
 
 	i2cAddr_eeprom = eepromAddress;
 	if (ARD186X_EEP_DISABLE != i2cAddr_eeprom)
