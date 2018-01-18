@@ -28,7 +28,7 @@ LICENSE:
 #include "Wire.h"
 #include "SPI.h"
 
-#ifndef _BV(a)
+#ifndef _BV
 #define _BV(a) (1<<(a))
 #endif
 
