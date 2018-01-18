@@ -51,13 +51,14 @@ void setup() {
   while(!SerialConsole);
 
   // This is the default initialization command
-  ard186xboard1.begin(DEVICE_LTC1867, ARD186X_EEP_ADDR_ZZ, chipSelectPin);
+  ard186xboard1.begin(DEVICE_LTC1863, ARD186X_EEP_ADDR_ZZ, chipSelectPin);
+  
   // For compatibility, the library resets the SPI mode every time it wants to use the SPI bus.
   // However, if the ARD-LTC186x is the only thing using the SPI bus, you don't need to run the 
   // heavy and slow SPI begin/end transaction calls.  Calling setFastSPI with an argument of 1
   // turns these slow calls off and gives you maximum speed.  Uncomment out the command below
-  // to try it.  It's about a 2x speed boost.
-  //ard186xboard1.setFastSPI(1);
+  // to try it.  It's about a 100% speed boost on the ARMs, 10% on AVRs
+  // ard186xboard1.setFastSPI(1);
   
   ard186xboard1.ltc186xChangeChannel(LTC186X_CHAN_SINGLE_0P, 1);
 
