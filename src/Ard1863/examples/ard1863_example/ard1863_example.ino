@@ -27,13 +27,11 @@ LICENSE:
 // This little bit of code redefines what the serial console is called 
 // on the Arduino M0 family.  It's called SerialUSB there and Serial on all
 // the rest of the Arduinos.  That's rational, right? :(
+// Pretty much every other Arduino calls it just "Serial", so default to that
+#define SerialConsole Serial
 
-#if defined(ARDUINO_ARCH_SAMD)
-  // The serial console is called SerialUSB on the M0
-  #define SerialConsole SerialUSB
-#else
-  #define SerialConsole Serial
-#endif
+// The serial console is called SerialUSB on the M0 - uncomment this if needed
+//#define SerialConsole SerialUSB
 
 
 Ard186x ard186xboard1;
