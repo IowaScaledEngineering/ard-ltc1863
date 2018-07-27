@@ -28,6 +28,9 @@ LICENSE:
 #include "Wire.h"
 #include "SPI.h"
 
+#ifndef _BV
+#define _BV(a) (1<<(a))
+#endif
 
 #define LTC186X_CONFIG_SINGLE_END 7
 #define LTC186X_CONFIG_ODD        6
@@ -80,6 +83,8 @@ LICENSE:
 
 #define ARD186X_SS_DIO   3
 
+#define ARD186X_SKIP_SPI_TRANSACTION 0x01
+
 class Ard186x
 {
 	public:
@@ -89,6 +94,8 @@ class Ard186x
 		const char* eui48Get();
 		byte eepromRead(int address, byte defaultOnError);
 		byte eepromWrite(int address, byte value, byte blocking);
+
+		void setFastSPI(byte speedySPI);
 
 		unsigned int ltc186xRead();
 		int ltc186xReadBipolar();
@@ -108,6 +115,7 @@ class Ard186x
 		uint8_t current186xConfig;
 		uint8_t ltc186xDeviceType;
 		int cs_pin;
+		byte flags;
 		char eui48[6*2+1];
 };
 
