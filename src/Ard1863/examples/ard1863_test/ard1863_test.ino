@@ -33,7 +33,7 @@ byte confChan=0;
 
 void setup() {
   // initialize serial communications at 9600 bps:
-  Serial.begin(9600);
+  Serial.begin(115200);
   Wire.begin();
 //  ard1863board1.begin(DEVICE_LTC1863, ARD186X_EEP_ADDR_ZZ);
   ard186xboard1.begin(DEVICE_LTC1867, ARD186X_EEP_ADDR_ZZ, 3);
