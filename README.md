@@ -4,10 +4,10 @@ The board can be found at:
 http://www.iascaled.com/store/ARD-LTC1863
 
 Hardware use documentation can be found on our wiki here:
-http://www.iascaled.com/info/ARD-LTC1863
+https://www.iascaled.com/store/ARD-LTC1863-HW
 
 Arduino control library documentation can be found on our wiki here:
-http://www.iascaled.com/info/Ard1863LibraryReference
+https://www.iascaled.com/store/ARD-LTC1863-LIB
 
 The Arduino library can be found in the repository under src/Ard1863.  The Ard1863 should be installed in your system Arduino library directory or in your user's sketchbook/Libraries directory.
 
