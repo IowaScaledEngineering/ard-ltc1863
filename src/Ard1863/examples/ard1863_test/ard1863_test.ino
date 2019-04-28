@@ -29,12 +29,21 @@ LICENSE:
 
 Ard186x ard186xboard1;
 
+TwoWire* WireInterface;
+
 byte confChan=0;
 
 void setup() {
   // initialize serial communications at 9600 bps:
   Serial.begin(115200);
-  Wire.begin();
+  
+#ifdef ARDUINO_SAM_DUE
+	WireInterface = &Wire1;
+#else 
+	WireInterface = &Wire;
+#endif
+  
+  WireInterface->begin();
 //  ard1863board1.begin(DEVICE_LTC1863, ARD186X_EEP_ADDR_ZZ);
   ard186xboard1.begin(DEVICE_LTC1867, ARD186X_EEP_ADDR_ZZ, 3);
   ard186xboard1.ltc186xChangeChannel(LTC186X_CHAN_SINGLE_0P, 1);
@@ -208,8 +217,8 @@ void findI2CSlave(uint8_t addr)
   byte stat, done = 0;
   while(!done)
   {
-    Wire.beginTransmission(addr);
-    stat = Wire.endTransmission();
+    WireInterface->beginTransmission(addr);
+    stat = WireInterface->endTransmission();
     if(!stat)
     {
       Serial.print("\a");
@@ -228,8 +237,8 @@ byte enumerateI2C(boolean showErrors)
  
   for(addr=0x00; addr<0x7F; addr++)
   {
-    Wire.beginTransmission(addr);
-    stat = Wire.endTransmission();
+    WireInterface->beginTransmission(addr);
+    stat = WireInterface->endTransmission();
     if(stat)
     {
       if(showErrors)

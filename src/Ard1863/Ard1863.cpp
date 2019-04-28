@@ -149,6 +149,13 @@ Ard186x::Ard186x()
 	ltc186xDeviceType = 0;
 	i2cAddr_eeprom = 0;
 	current186xConfig = LTC186X_CHAN_DIFF_0P_1N;
+
+#ifdef ARDUINO_SAM_DUE
+	WireInterface = &Wire1;
+#else 
+	WireInterface = &Wire;
+#endif
+
 	strcpy(eui48, "Unknown");
 }
 
@@ -192,36 +199,36 @@ byte Ard186x::begin(byte deviceType, byte eepromAddress, int cs_pin = 3)
 	digitalWrite(this->cs_pin, HIGH);
 	SPI.endTransaction();
 
-	Wire.begin();
+	this->WireInterface->begin();
 
 	i2cAddr_eeprom = eepromAddress;
 	if (ARD186X_EEP_DISABLE != i2cAddr_eeprom)
 	{
 		// ARD186x_EEP_DISABLE means that we're not going to use the EEPROM
 		// This is useful on boards like the Leonardo where /CS (D3) steps on an I2C pin
-		Wire.beginTransmission(i2cAddr_eeprom);
-		Wire.write(ARD186X_EEPROM_ADDR_EUI48);
-		retval = Wire.endTransmission(false);
+		this->WireInterface->beginTransmission(i2cAddr_eeprom);
+		this->WireInterface->write(ARD186X_EEPROM_ADDR_EUI48);
+		retval = this->WireInterface->endTransmission(false);
 		// Anything but zero means we couldn't initialize the LTC2499
 		if (0 != retval)
 		{
 			// Make sure we send a stop bit
-			Wire.endTransmission(true);
+			this->WireInterface->endTransmission(true);
 			i2cAddr_eeprom = 0;
 			init_status |= ARD186X_EEPROM_ERR;
 		}
 		else
 		{
 
-			Wire.requestFrom(i2cAddr_eeprom, (uint8_t)6, (uint8_t)true);
-			if (Wire.available() < 6)
+			this->WireInterface->requestFrom(i2cAddr_eeprom, (uint8_t)6, (uint8_t)true);
+			if (this->WireInterface->available() < 6)
 			{
 				i2cAddr_eeprom = 0;		
 				init_status |= ARD186X_EEPROM_ERR;
 			} else {
 				memset(eui48, 0, sizeof(eui48));
 				for(i=0; i<12; i+=2)
-					sprintf(&eui48[i], "%02X", Wire.read());
+					sprintf(&eui48[i], "%02X", this->WireInterface->read());
 			}
 		}
 	}
@@ -242,21 +249,21 @@ byte Ard186x::eepromRead(int address, byte defaultOnError=0)
 	if (address > 0xFF)
 		return(defaultOnError);
 	
-	Wire.beginTransmission(i2cAddr_eeprom);
-	Wire.write((uint8_t)address);
-	retval = Wire.endTransmission(false);
+	this->WireInterface->beginTransmission(i2cAddr_eeprom);
+	this->WireInterface->write((uint8_t)address);
+	retval = this->WireInterface->endTransmission(false);
 	// Anything but zero means we couldn't initialize the EEPROM
 	if (0 != retval)
 	{
 		// Make sure we send a stop bit
-		Wire.endTransmission(true);
+		this->WireInterface->endTransmission(true);
 		return(0);
 	}
 
-	Wire.requestFrom((uint8_t)i2cAddr_eeprom, (uint8_t)1, (uint8_t)true);
-	if (Wire.available() < 1)
+	this->WireInterface->requestFrom((uint8_t)i2cAddr_eeprom, (uint8_t)1, (uint8_t)true);
+	if (this->WireInterface->available() < 1)
 		return(defaultOnError);
-	return(Wire.read());
+	return(this->WireInterface->read());
 }
 
 byte Ard186x::eepromWrite(int address, byte value, byte blocking=1)
@@ -272,10 +279,10 @@ byte Ard186x::eepromWrite(int address, byte value, byte blocking=1)
 	if (address > 0x7F)
 		return(ARD186X_EEPROM_ERR);
 		
-	Wire.beginTransmission(i2cAddr_eeprom);
-	Wire.write(address);
-	Wire.write(value);
-	retval = Wire.endTransmission(true);
+	this->WireInterface->beginTransmission(i2cAddr_eeprom);
+	this->WireInterface->write(address);
+	this->WireInterface->write(value);
+	retval = this->WireInterface->endTransmission(true);
 	// Anything but zero means we couldn't write to the EEPROM
 	if (0 != retval)
 	{
@@ -286,9 +293,9 @@ byte Ard186x::eepromWrite(int address, byte value, byte blocking=1)
 	{
 		while (0 != waitLoop--)
 		{
-			Wire.beginTransmission(i2cAddr_eeprom);
-			Wire.write(address);
-			if (0 == Wire.endTransmission(true))
+			this->WireInterface->beginTransmission(i2cAddr_eeprom);
+			this->WireInterface->write(address);
+			if (0 == this->WireInterface->endTransmission(true))
 				return(0);
 			delay(1);
 		}

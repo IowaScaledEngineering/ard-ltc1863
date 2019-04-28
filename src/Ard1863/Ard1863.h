@@ -116,6 +116,7 @@ class Ard186x
 		uint8_t ltc186xDeviceType;
 		int cs_pin;
 		byte flags;
+		TwoWire* WireInterface;
 		char eui48[6*2+1];
 };
 
