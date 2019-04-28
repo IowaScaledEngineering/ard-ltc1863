@@ -23,7 +23,7 @@ LICENSE:
 
 #include <stdlib.h>
 #include <string.h>
-#include <avr/io.h>
+//#include <avr/io.h>
 #include "Arduino.h"
 #include "Wire.h"
 #include "SPI.h"
