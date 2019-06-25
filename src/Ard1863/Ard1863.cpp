@@ -132,13 +132,13 @@ void Ard186x::internalChangeChannel(byte nextChannel, byte unipolar)
 
 unsigned int Ard186x::ltc186xReadAndChangeChannel(byte nextChannel, byte unipolar=1)
 {
-	ltc186xChangeChannel(nextChannel, unipolar);
+	internalChangeChannel(nextChannel, unipolar);
 	return(ltc186xRead());
 }
 
 int Ard186x::ltc186xReadBipolarAndChangeChannel(byte nextChannel, byte unipolar=0)
 {
-	ltc186xChangeChannel(nextChannel, unipolar);
+	internalChangeChannel(nextChannel, unipolar);
 	return(ltc186xReadBipolar());
 }
 
