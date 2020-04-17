@@ -1,0 +1,18 @@
+G04 start of page 11 for group -4014 idx -4014 *
+G04 Title: (unknown), bottompaste *
+G04 Creator: pcb 20140316 *
+G04 CreationDate: Sun 31 Mar 2019 02:17:40 PM GMT UTC *
+G04 For: railfan *
+G04 Format: Gerber/RS-274X *
+G04 PCB-Dimensions (mil): 2100.00 2700.00 *
+G04 PCB-Coordinate-Origin: lower left *
+%MOIN*%
+%FSLAX25Y25*%
+%LNBOTTOMPASTE*%
+%ADD87R,0.0300X0.0300*%
+%ADD86C,0.0600*%
+G54D86*X29900Y150000D03*
+G54D87*X28400Y151500D02*Y148500D01*
+G54D86*X23100Y150000D03*
+G54D87*X24600Y151500D02*Y148500D01*
+M02*
